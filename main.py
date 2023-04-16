@@ -1,6 +1,7 @@
 import random
 import time
 
+# number of total fitness value if all queens are in same row
 MAX_FITNESS_VALUE = 56
 
 
@@ -41,6 +42,7 @@ def horizontal_threatening(queen_row_number, chess_board, column_num):
 def vertical_threatening(queen_row_number, chess_board, column_num):
     fitness = 0
     for i in range(8):
+        # if its own column continue
         if column_num == i:
             continue
         else:
@@ -53,6 +55,7 @@ def vertical_threatening(queen_row_number, chess_board, column_num):
 def cross_threatening(queen_row_number, chess_board, column_num):
     fitness = 0
     for i in range(8):
+        # if its own column continue
         if column_num == i:
             continue
         if abs(i - column_num) == abs(queen_row_number - chess_board[i]):
@@ -92,36 +95,49 @@ def sorted_index_list(list_of_values):
 
 # solving for only one queen
 def solve_for_one_queen(chess_board, start_index):
-    # for calculating how many times a queen has been moved at final
+    # calculated fitness
     sum_of_fitness, fitness_values = calculate_fitness(chess_board)
+    # sorted fitness values list by value but with stored index as keys
     sorted_fitness_values_index = sorted_index_list(fitness_values)
+    # finding the max fitness value
     max_fitness_index = sorted_fitness_values_index[start_index]
+    # finding the best position for all seven possible squares for this particular queen
     min_fitness_position = find_min_fitness_position(chess_board, max_fitness_index)
+    # we need a new copied chess board for not changing anything before checking if it is better than before
     new_chess_board = chess_board.copy()
     new_chess_board[max_fitness_index] = min_fitness_position
+    # calculating total fitness value for new rearranged chess_board
     new_sum_of_fitness, new_fitness_values = calculate_fitness(new_chess_board)
+    # checking it if it is better than before: if it is than assign copied board as real one
     if new_sum_of_fitness < sum_of_fitness:
         sum_of_fitness = new_sum_of_fitness
         fitness_values = new_fitness_values
         chess_board = new_chess_board
-        # here we succeeded better board with one arranged queen, we must increase rearranged_queen_count by 1
-
+    # if there is no better solution for max fitness valued queen than continue with second max valued queen
     else:
+        # if there is no better solution for all queens than it is a local max issue return -1 and use this -1 for restarting
+        # this solving is better than using a local issue limit(like do 100 loop; if not found restart)
+        # the limit can interrupt the solution; we must look all possible queens
         if start_index >= 7:
             return -1, [], []
+        # calculate next max valued queen recursively
         sum_of_fitness, fitness_values, chess_board = solve_for_one_queen(chess_board, start_index + 1)
 
     return sum_of_fitness, fitness_values, chess_board
 
 
-# solving the board (all queens if possible else restarting in main()
+# solving the board for all queens if possible else restarting in main()
 def solve():
+    # for finding how many times a queen moved in this process(but only for this board,not restarts include)
+    # if the restarts will be calculated than sum all values in main()
     rearranged_queen_count = 1
     chess_board = random_queen_per_column()
+    # we started with max fitness valued because of sorted_fitness_values[0] -> max fitness valued queen
     sum_of_fitness, fitness_values, chess_board = solve_for_one_queen(chess_board, 0)
-
+    # if sum of fitness not zero problem not solved
     while sum_of_fitness > 0:
         sum_of_fitness, fitness_values, chess_board = solve_for_one_queen(chess_board, 0)
+        # if solve for one queen works and not returns -1 than a queen has been arranged
         rearranged_queen_count += 1
     if sum_of_fitness == -1:
         return True, rearranged_queen_count
@@ -130,9 +146,11 @@ def solve():
         print()
         print_board(chess_board)
         print("rearranged queen count for this chess board: " + str(rearranged_queen_count))
+        # returning rearranged_queen_count for calculating the sum of all in main()
         return False, rearranged_queen_count
 
 
+# for visual chess board
 def print_board(chess_board):
     for i in range(8):
         for j in range(8):
@@ -143,6 +161,7 @@ def print_board(chess_board):
         print()
 
 
+# easy printing method for final values matrix
 def print_matrix(matrix):
     for row in matrix:
         for element in row:
@@ -151,7 +170,9 @@ def print_matrix(matrix):
 
 
 def main():
+    # this will hold the values of all 9 solved problems
     final_values_matrix = []
+    # range is 9 because we must solve the problem 9 different times
     for i in range(9):
         # for all rearranged queens count for this particular solution
         total_rearranged_queen_count = 0
