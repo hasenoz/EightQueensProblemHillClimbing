@@ -11,4 +11,4 @@ The algorithm steps i used:
  - If no better solution found go to step 1
  - Do step 2-6 until  sum of all threatenings equals to zero
 
-I solved nine different times but you can rearrange the code for any number.(You must rearrange the matrix to)
+I solved nine different times but you can rearrange the code for any number.(You must also rearrange the matrix)
