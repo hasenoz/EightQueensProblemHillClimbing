@@ -10,3 +10,5 @@ The algorithm steps i used:
 5- If sum of threatening is not lower than before do step 4-5 for next queen that has maximum number of threatening after this queen.
  - If no better solution found go to step 1
 6- Do step 2-6 until  sum of all threatenings equals to zero
+
+I solved nine different times but you can rearrange the code for any number.(You must rearrange the matrix to)
